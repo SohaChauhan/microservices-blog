@@ -76,18 +76,18 @@ jobs:
         with:
           context: ./user-service
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/user-service:latest
+          tags: ghcr.io/sohachauhan/microservices-blog/user-service:latest
 
       - name: Build and Push Post Service to GHCR
         uses: docker/build-push-action@v5
         with:
           context: ./post-service
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/post-service:latest
+          tags: ghcr.io/sohachauhan/microservices-blog/post-service:latest
 
       - name: Build and Push Gateway to GHCR
         uses: docker/build-push-action@v5
         with:
           context: ./blog-gateway
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/gateway:latest
+          tags: ghcr.io/sohachauhan/microservices-blog/gateway:latest
