@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Microservices CI
 
 on:
   push:
@@ -7,60 +7,44 @@ on:
     branches: ["main"]
 
 jobs:
-  build-and-test:
+  user-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./user-service
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
+      - run: npm install
+      - run: npx eslint .
 
-      - name: Install Dependencies (User Service)
-        run: |
-          cd user-service
-          npm install
-
-      - name: Install Dependencies (Post Service)
-        run: |
-          cd post-service
-          npm install
-
-      - name: Install Dependencies (Gateway)
-        run: |
-          cd blog-gateway
-          npm install
-
-      - name: Lint User Service
-        run: |
-          cd user-service
-          npx eslint .
-
-      - name: Lint Post Service
-        run: |
-          cd post-service
-          npx eslint .
-
-      - name: Lint Gateway
-        run: |
-          cd blog-gateway
-          npx eslint .
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+  post-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./post-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: "18"
+          cache: "npm"
+      - run: npm install
+      - run: npx eslint .
 
-      - name: Build and Push Docker Images
-        uses: docker/build-push-action@v5
+  gateway:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/user-service:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/post-service:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/gateway:${{ github.sha }}
+          node-version: "18"
+          cache: "npm"
+      - run: npm install
+      - run: npx eslint .
