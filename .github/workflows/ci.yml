@@ -11,40 +11,56 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./user-service
+        working-directory: ./user-service # 👈 work in user-service folder
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-      - run: npm install
-      - run: npx eslint .
+          # cache: 'npm'   # removed since no lock file
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint .
 
   post-service:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./post-service
+        working-directory: ./post-service # 👈 work in post-service folder
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-      - run: npm install
-      - run: npx eslint .
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint .
 
   gateway:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./blog-gateway
+        working-directory: ./blog-gateway # 👈 work in gateway folder
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-      - run: npm install
-      - run: npx eslint .
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint .
