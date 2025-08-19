@@ -3,8 +3,13 @@ const js = require("@eslint/js");
 module.exports = [
   js.configs.recommended,
   {
-    rules: {
-      // Add custom rules here
+    languageOptions: {
+      globals: {
+        console: "readonly", // allow console
+        require: "readonly", // allow require
+        module: "readonly",
+        process: "readonly",
+      },
     },
   },
 ];
