@@ -5,10 +5,11 @@ module.exports = [
   {
     languageOptions: {
       globals: {
-        console: "readonly", // allow console
-        require: "readonly", // allow require
+        console: "readonly",
+        require: "readonly",
         module: "readonly",
         process: "readonly",
+        __dirname: "readonly", // 👈 add this
       },
     },
   },
