@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       # Install ESLint
       - name: Install ESLint
@@ -71,7 +71,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Build and Push User Service to GHCR
+      - name: Build and Push User Service to GHCR
         uses: docker/build-push-action@v5
         with:
           context: ./user-service
@@ -91,4 +91,3 @@ jobs:
           context: ./blog-gateway
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/gateway:latest
-
