@@ -25,38 +25,69 @@ jobs:
       - name: Install ESLint
         run: npm install -g eslint
 
-      # Run ESLint on all services
-
+      # Run ESLint (but don’t fail workflow if errors exist)
       - name: Run ESLint
         run: npx eslint . || echo "ESLint failed, but continuing..."
 
-      # Login to DockerHub
+      # ---------------------------------------------------
+      # DockerHub Push
+      # ---------------------------------------------------
+
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build & Push User Service
-      - name: Build and Push User Service
+      - name: Build and Push User Service to DockerHub
         uses: docker/build-push-action@v5
         with:
           context: ./user-service
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/user-service:latest
 
-      # Build & Push Post Service
-      - name: Build and Push Post Service
+      - name: Build and Push Post Service to DockerHub
         uses: docker/build-push-action@v5
         with:
           context: ./post-service
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/post-service:latest
 
-      # Build & Push Gateway
-      - name: Build and Push Gateway
+      - name: Build and Push Gateway to DockerHub
         uses: docker/build-push-action@v5
         with:
           context: ./blog-gateway
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
+
+      # ---------------------------------------------------
+      # GitHub Container Registry Push
+      # ---------------------------------------------------
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push User Service to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./user-service
+          push: true
+          tags: ghcr.io/${{ github.repository }}/user-service:latest
+
+      - name: Build and Push Post Service to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./post-service
+          push: true
+          tags: ghcr.io/${{ github.repository }}/post-service:latest
+
+      - name: Build and Push Gateway to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./blog-gateway
+          push: true
+          tags: ghcr.io/${{ github.repository }}/gateway:latest
