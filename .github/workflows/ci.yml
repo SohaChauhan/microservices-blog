@@ -3,66 +3,32 @@ name: CI/CD Pipeline
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # Setup Node.js (for linting)
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "npm"
 
       # Install ESLint
-      - name: Install ESLint
-        run: npm install -g eslint
+      - name: Install dependencies
+        run: npm install
 
       # Run ESLint (but don’t fail workflow if errors exist)
       - name: Run ESLint
-        run: npx eslint . || echo "ESLint failed, but continuing..."
-
-      # ---------------------------------------------------
-      # DockerHub Push
-      # ---------------------------------------------------
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push User Service to DockerHub
-        uses: docker/build-push-action@v5
-        with:
-          context: ./user-service
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/user-service:latest
-
-      - name: Build and Push Post Service to DockerHub
-        uses: docker/build-push-action@v5
-        with:
-          context: ./post-service
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/post-service:latest
-
-      - name: Build and Push Gateway to DockerHub
-        uses: docker/build-push-action@v5
-        with:
-          context: ./blog-gateway
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
-
-      # ---------------------------------------------------
-      # GitHub Container Registry Push
-      # ---------------------------------------------------
+        run: npm run lint || echo "ESLint failed, but continuing..."
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -70,24 +36,21 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and Push User Service to GHCR
+      - name: Build and Push Docker Image - User Service
         uses: docker/build-push-action@v5
         with:
           context: ./user-service
           push: true
-          tags: ghcr.io/sohachauhan/microservices-blog/user-service:latest
-
-      - name: Build and Push Post Service to GHCR
+          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/user-service:${{ github.sha }}
+      - name: Build and Push Docker Image - Post Service
         uses: docker/build-push-action@v5
         with:
           context: ./post-service
           push: true
-          tags: ghcr.io/sohachauhan/microservices-blog/post-service:latest
-
-      - name: Build and Push Gateway to GHCR
+          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/post-service:${{ github.sha }}
+      - name: Build and Push Docker Image - Gateway
         uses: docker/build-push-action@v5
         with:
           context: ./blog-gateway
           push: true
-          tags: ghcr.io/sohachauhan/microservices-blog/gateway:latest
+          tags: ghcr.io/${{ github.repository_owner }}/microservices-blog/blog-gateway:${{ github.sha }}

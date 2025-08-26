@@ -1,15 +1,16 @@
 {
   "name": "blog-gateway",
-  "description": "Express Gateway Instance Bootstraped from Command Line",
-  "repository": {},
-  "license": "UNLICENSED",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
+  "scripts": {
+    "start": "node index.js",
+    "lint": "eslint ."
+  },
   "dependencies": {
-    "express-gateway": "^1.16.11"
+    "express": "^5.1.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
     "eslint": "^9.33.0"
   }
 }
