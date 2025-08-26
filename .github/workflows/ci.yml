@@ -23,7 +23,7 @@ jobs:
 
       # Install ESLint
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # Run ESLint (but don’t fail workflow if errors exist)
       - name: Run ESLint
