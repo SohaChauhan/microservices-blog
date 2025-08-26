@@ -1,6 +1,3 @@
 /user-service/node_modules/
 /post-service/node_modules/
 /blog-gateway/node_modules/
-/user-service/package-lock.json
-/post-service/package-lock.json
-/blog-gateway/package-lock.json
